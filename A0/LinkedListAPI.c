@@ -1,33 +1,191 @@
 #include "LinkedListAPI.h"
 
+//Start
+typedef struct name {
+	char* firstName;
+	char* lastName;
+	unsigned int age;
+}Name;
+
+//printFunc will return a string that contains a humanly readable copy of the list contents
+char* printFunc(void *toBePrinted){
+	
+	char* tmpStr;
+	Name* tmpName;
+	int len;
+	
+	if (toBePrinted == NULL){
+		return NULL;
+	}
+	
+	tmpName = (Name*)toBePrinted;
+	
+	
+	/*
+	Length of the string is:
+	length of the first and last names+3 spaces+4 chars for "Age:"+1 character for '\0'+20 digits to represent the age
+	While we only need 3 digits to represent the human age, if the age is uninitialised, it can be any int value
+	An int is 8 bytes on 64-bit system, and needs up to 20 chars to represent it
+	If we don't do this, our code will crash if age is uninitialized	
+	*/
+	len = strlen(tmpName->firstName)+strlen(tmpName->lastName)+28;
+	tmpStr = (char*)malloc(sizeof(char)*len);
+	
+	sprintf(tmpStr, "%s %s Age: %d", tmpName->firstName, tmpName->lastName, tmpName->age);
+	
+	return tmpStr;
+}
+
+//We compare names by last name
+int compareFunc(const void *first, const void *second){
+	
+	Name* tmpName1;
+	Name* tmpName2;
+	
+	if (first == NULL || second == NULL){
+		return 0;
+	}
+	
+	tmpName1 = (Name*)first;
+	tmpName2 = (Name*)second;
+	
+	return strcmp((char*)tmpName1->lastName, (char*)tmpName2->lastName);
+}
+
+//We need to free the first and last names, and then the Name struct itself
+void deleteFunc(void *toBeDeleted){
+	
+	Name* tmpName;
+	
+	if (toBeDeleted == NULL){
+		return;
+	}
+	
+	tmpName = (Name*)toBeDeleted;
+	
+	free(tmpName->firstName);
+	free(tmpName->lastName);
+	free(tmpName);
+}
+
+int main(void){
+	
+	Name* tmpName;
+	char tmpStr[100];
+	int memLen;
+	
+	/* 
+	Create the list.  The list is allocated on the stack, and initializeList returns the list struct.
+	*/
+	List list = initializeList(&printFunc, &deleteFunc, &compareFunc);
+	
+	//Populate the list
+	for (int i = 0; i < 4; i++){
+		tmpName = (Name*)malloc(sizeof(Name));
+		tmpName->age = (i+1)*10;
+		
+		sprintf(tmpStr, "Name%d", i+3);
+		memLen = strlen(tmpStr)+2;
+		tmpName->firstName = (char*)malloc(sizeof(char)*memLen);
+		strcpy(tmpName->firstName, tmpStr);
+		
+		sprintf(tmpStr, "Lastname%d", i+3);
+		memLen = strlen(tmpStr)+2;
+		tmpName->lastName = (char*)malloc(sizeof(char)*memLen);
+		strcpy(tmpName->lastName, tmpStr);
+	
+		insertSorted(&list, (void*)tmpName);
+		printf("%p\n", tmpName);
+	}
+
+	tmpName = (Name*)malloc(sizeof(Name));
+	tmpName->age = 100;
+	
+	sprintf(tmpStr, "Name%d", 9);
+	memLen = strlen(tmpStr)+2;
+	tmpName->firstName = (char*)malloc(sizeof(char)*memLen);
+	strcpy(tmpName->firstName, tmpStr);
+	
+	sprintf(tmpStr, "Lastname%d", 9);
+	memLen = strlen(tmpStr)+2;
+	tmpName->lastName = (char*)malloc(sizeof(char)*memLen);
+	strcpy(tmpName->lastName, tmpStr);
+
+	insertSorted(&list, (void*)tmpName);
+	printf("%p\n", tmpName);
+
+	tmpName = (Name*)malloc(sizeof(Name));
+	tmpName->age = 100;
+	
+	sprintf(tmpStr, "Name%d", 1);
+	memLen = strlen(tmpStr)+2;
+	tmpName->firstName = (char*)malloc(sizeof(char)*memLen);
+	strcpy(tmpName->firstName, tmpStr);
+	
+	sprintf(tmpStr, "Lastname%d", 1);
+	memLen = strlen(tmpStr)+2;
+	tmpName->lastName = (char*)malloc(sizeof(char)*memLen);
+	strcpy(tmpName->lastName, tmpStr);
+
+	insertSorted(&list, (void*)tmpName);
+	printf("%p\n", tmpName);
+
+	
+	void* elem;
+	
+	//Create an iterator - again, the iterator is allocated on the stack
+	ListIterator iter = createIterator(list);
+
+	/*
+	Traverse the list using an iterator.  
+	nextElement() returns NULL ones we reach the end of the list
+	*/
+	while ((elem = nextElement(&iter)) != NULL){
+		Name* tmpName = (Name*)elem;
+		
+		/*
+		We use the printData function that we created to return a string representation 
+		of the data associated with the current node
+		*/
+		char* str = list.printData(tmpName);
+		printf("%s\n", str);
+		
+		//Since list.printData dynamically allocates the string, we must free it
+		free(str);
+	}
+	
+	printf("\n");
+
+	printf("%s\n", toString(list));
+	
+	/*
+	Crear list contents - free each node, including its contents
+	Since the list is created in the stack, we don't need to free it. 
+	*/
+	clearList(&list);	
+	
+	return 0;		
+}
+
+//end
+
 List initializeList(char* (*printFunction)(void *toBePrinted),void (*deleteFunction)(void *toBeDeleted),int (*compareFunction)(const void *first,const void *second)){
 	
 	if(printFunction == NULL || deleteFunction == NULL || compareFunction == NULL){
 		printf("A function pointer is NULL\n");
 	}
 
-	List* list;
+	List list;
 
-	list = malloc(sizeof(List));
-
-	if(list == NULL){
-		printf("initializeList malloc failed\n");
-	}
-
-	list->head = NULL;
-	list->tail = NULL;
+	list.head = NULL;
+	list.tail = NULL;
 
 	//Function Pointers
-	list->deleteData = deleteFunction;
-	list->compare = compareFunction;
-	list->printData = printFunction;
+	list.deleteData = deleteFunction;
+	list.compare = compareFunction;
+	list.printData = printFunction;
 
-	return *list;
-}
-
-int main(){
-	printf("Hello World");
-	return 0;
+	return list;
 }
 
 Node *initializeNode(void *data){
@@ -102,13 +260,15 @@ void clearList(List *list){
 
 	while(list->head != NULL){
 		curr = list->head;
-		curr->next->previous = NULL;
+
+		if(curr->next != NULL){
+			curr->next->previous = NULL;
+		}
+		
 		list->deleteData(curr->data);
 		list->head = curr->next;
 		free(curr);
 	}
-
-	free(list);
 }
 
 void insertSorted(List *list, void *toBeAdded){ 
@@ -123,26 +283,44 @@ void insertSorted(List *list, void *toBeAdded){
 		return;
 	}
 
-
 	if(list->head == NULL){
 		list->head = insertNode;
 		list->tail = insertNode;
+		return;
 
 	} 
 
-	while(curr->next != NULL && ((list->compare(insertNode->data, curr->data) < 0 && list->compare(insertNode->data, curr->next->data) > 0) || list->compare(insertNode->data, curr->next->data) == 0)){
+	while(curr->next != NULL && (list->compare(curr->data, insertNode->data) < 0)){
 		curr = curr->next;
+		printf("hi\n");
 	}
 
 	if(curr->next == NULL){
-		curr->next = insertNode;
-		insertNode->previous = curr;
-		list->tail = insertNode;
-	} else {
-		insertNode->next = curr->next;
-		curr->next->previous = insertNode;
-		curr->next = insertNode;
-		insertNode->previous = curr;
+		if(list->compare(curr->data, insertNode->data) < 0){
+			curr->next = insertNode;
+			insertNode->previous = curr;
+			list->tail = insertNode;
+		} else if (curr->previous == NULL){
+			curr->previous = insertNode;
+			insertNode->next = curr;
+			list->head = insertNode;
+		} else {
+			curr->previous->next = insertNode;
+			insertNode->previous = curr->previous;
+			insertNode->next = curr;
+			curr->previous = insertNode;
+		}
+
+	 } else if (curr->previous == NULL){
+	 	curr->previous = insertNode;
+		insertNode->next = curr;
+		list->head = insertNode;
+
+	 } else {
+	 	curr->previous->next = insertNode;
+		insertNode->previous = curr->previous;
+		insertNode->next = curr;
+		curr->previous = insertNode;
 	}
 	
 }
@@ -182,14 +360,14 @@ void* deleteDataFromList(List *list, void *toBeDeleted){
 	return toBeDeleted;
 }
 
-void* getFromFront(List *list){ //this should be constatnts not *list
+void* getFromFront(List list){ //this should be constatnts not *list
 
-	return list->head->data;
+	return list.head->data;
 }
 
-void* getFromBack(List *list){
+void* getFromBack(List list){
 
-	return list->tail->data;
+	return list.tail->data;
 }
 
 char* toString(List list){
@@ -233,16 +411,20 @@ char* toString(List list){
 }
 
 ListIterator createIterator(List list){
-	ListIterator* it;
-	it = malloc(sizeof(ListIterator));
+	ListIterator it;
 
-	it->current = list.head;
+	it.current = list.head;
 
-	return *it;
+	return it;
 }
 
 void* nextElement(ListIterator* iter){
 	void* currData;
+
+	if(iter->current == NULL){
+		return NULL;
+	}
+
 	currData = iter->current->data;
 
 	iter->current = iter->current->next;
