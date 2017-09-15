@@ -222,36 +222,41 @@ char* toString(List list){
 
 	Node* curr;
 	char* str;
+	char* data;
 	int len;
 
 	curr = list.head;
 
 	//Constructing the string of the first node data
-	len  = strlen(list.printData(curr->data));
+	data = list.printData(curr->data);
+	len  = strlen(data);
 	str  = malloc(sizeof(char)*len + 2);
-	strcpy(str, list.printData(curr->data));
+	strcpy(str, data);
 	strcat(str, "\n");
+	free(data);
 
 	while(curr->next != NULL){
-		//char *testStr;
+		char *testStr;
 
 		curr = curr->next;
 
 		//Adjusting the size of the string when adding new data
-		len  = strlen(list.printData(curr->data)) + len + 2;
-		str = (char*)realloc(str, sizeof(char)*len +2);
+		data = list.printData(curr->data);
+		len  = strlen(data + len + 2);
+		testStr = (char*)realloc(str, sizeof(char)*len +2);
 
-		if(str == NULL){
+		if(testStr == NULL){
 			printf("Memory allocation in toString failed\n");
 			return NULL;
 
-		} /*else {
+		} else {
 			str = testStr;
-		}*/
+		}
 
 		//Adding the new data to the string
-		strcat(str, list.printData(curr->data));
+		strcat(str, data);
 		strcat(str, "\n");
+		free(data);
 	}
 
 	return str;
