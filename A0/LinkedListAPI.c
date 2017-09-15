@@ -233,21 +233,21 @@ char* toString(List list){
 	strcat(str, "\n");
 
 	while(curr->next != NULL){
-		char *testStr;
+		//char *testStr;
 
 		curr = curr->next;
 
 		//Adjusting the size of the string when adding new data
 		len  = strlen(list.printData(curr->data)) + len + 2;
-		testStr = (char*)realloc(str, sizeof(char)*len);
+		str = (char*)realloc(str, sizeof(char)*len +2);
 
-		if(testStr == NULL){
+		if(str == NULL){
 			printf("Memory allocation in toString failed\n");
 			return NULL;
 
-		} else {
+		} /*else {
 			str = testStr;
-		}
+		}*/
 
 		//Adding the new data to the string
 		strcat(str, list.printData(curr->data));
