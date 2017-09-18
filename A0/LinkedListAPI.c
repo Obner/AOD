@@ -6,7 +6,8 @@
    LinkedListAPI.h. It implements functions for a doubly linked
    list and follows the struct specified in LinkedList.h
  * This file does not contain any reused code. In data structures
-   I implemented a singly linked list.
+   I implemented a singly linked list. I referred to lecture notes
+   in both CIS2520 and CIS2750
  * My current CIS2750 professor, Denis Nikitenko
  */
 
