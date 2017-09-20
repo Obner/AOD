@@ -29,9 +29,9 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 	}
 
 	inputFile = fopen(fileName, "r");
-	inputLine = malloc(sizeof(char)*76);
+	inputLine = malloc(sizeof(char)*100);
 
-	while(fgets(inputLine, 76, inputFile) != NULL){
+	while(fgets(inputLine, 100, inputFile) != NULL){
 
 		//printf("%s\n", inputLine);
 
@@ -40,7 +40,7 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 
 			//Erase the new
 			if (inputLine[len - 1] == '\n'){
-				inputLine[len - 2] = '\0';
+				inputLine[len - 1] = '\0';
 			}
 
 			//Update length
@@ -48,7 +48,8 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 
 			printf("%s\n", inputLine);
 
-			if(strcmp(inputLine, "BEGIN:VCALENDAR") == 0){
+
+			if(startWith(inputLine, "BEGIN:VCALENDAR")){
 				if(strtFlag == 1){ //Repeated BEGIN:VCALENDAR
 					freeFile(inputFile, inputLine);
 					return INV_CAL; 
@@ -74,7 +75,7 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 				}
 				
 			}
-			if (startWith(inputLine, "PRODID:")){
+			/*if (startWith(inputLine, "PRODID:")){
 				if(prodFlag != 0){ //BEGIN:VCALENDAR has not been declared or PRODID decalred twice
 					freeFile(inputFile, inputLine);
 					return INV_CAL;
@@ -106,7 +107,7 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 					(*obj)->event = malloc(sizeof(Event));
 					strcpy((*obj)->event->UID, tempEvent); 
 				}
-			}
+			}*/
 
 			/*if(strstr(inputLine, "DTSTAMP:") != NULL){
 
@@ -145,8 +146,10 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 
 				//(*obj)->event->creationDateTime.date;
 				//(*obj)->event->creationDateTime.time;
-			}
+			//}
+
 		}
+		inputLine[0] = '\0';
 	}
 
 	freeFile(inputFile, inputLine);
@@ -170,7 +173,10 @@ bool startWith(char* str, char* compare){
 }
 
 bool endsWith(char* str, char* compare){
-	if(strcmp(compare, strchr(str, ':'))){
+	printf("%s\n", compare);
+	printf("%s\n", strchr(str, ':'));
+	printf("%d\n", strcmp(compare, strchr(str, ':')));
+	if(strcmp(compare, strchr(str, ':')) == 0){
 		return true;
 	} else {
 		return false;
@@ -203,7 +209,8 @@ ErrorCode parseFile(char* fileName){
 
 ErrorCode parseVersion(char* inputLine, int verFlag){
 
-	if(endsWith(inputLine, ":2.0")){
+	if((endsWith(inputLine, ":2.0")) == false){
+		printf("HERE\n");
 		return INV_VER;
 	} else if (verFlag == 1){
 		return DUP_VER;
@@ -263,9 +270,9 @@ int main(){
 
 	strcpy(str, printError(createCalendar("test.ics", cal)));
 	printf("%s", str);
-	printf("%f\n", (*cal)->version);
-	printf("%s\n", (*cal)->prodID);
-	printf("%s\n", (*cal)->event->UID);
+	// printf("%f\n", (*cal)->version);
+	// printf("%s\n", (*cal)->prodID);
+	// printf("%s\n", (*cal)->event->UID);
 
 	free((*cal)->event);
 	free((cal));
