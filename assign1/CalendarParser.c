@@ -43,7 +43,7 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 
 			//Erase the newline
 			if (inputLine[len - 1] == '\n'){
-				inputLine[len - 2] = '\0';
+				inputLine[len - 1] = '\0';
 			}
 
 			//Update length
