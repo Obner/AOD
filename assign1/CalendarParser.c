@@ -18,8 +18,8 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 	char* inputLine;
 	int strtFlag = 0;
 	int verFlag  = 0;
-	int prodFlag = 0;
-	int evtFlag  = 0;
+	// int prodFlag = 0;
+	// int evtFlag  = 0;
 	ErrorCode check;
 	Calendar* cal;
 	cal = malloc(sizeof(Calendar));
@@ -226,11 +226,11 @@ void deleteCalendar(Calendar* obj){
 	free(obj);
 }
 
-char* printCalendar(const Calendar* obj){
-	printf("%f\n", cal->version);
-	printf("%s\n", cal->prodID);
-	printf("%s\n", cal->event->UID);
-}
+/*char* printCalendar(const Calendar* obj){
+	printf("%f\n", obj->version);
+	printf("%s\n", obj->prodID);
+	printf("%s\n", obj->event->UID);
+}*/
 
 const char* printError(ErrorCode err){
 

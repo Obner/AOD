@@ -1,4 +1,4 @@
-*/*.exe
-*/*.h.gch
-*/*.exe.stackdump
-*/*.out
+/*.exe
+/*.h.gch
+/*.exe.stackdump
+/*.out
