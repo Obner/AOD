@@ -27,10 +27,19 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 	}
 
 	//size undetermined
-	inputLine = malloc(sizeof(char)*151);
+	inputLine = malloc(sizeof(char)*76);
 
-	while(fgets(inputLine, 151, inputFile) != NULL){
+	while(fgets(inputLine, 76, inputFile) != NULL){
+		
+		if(!inputLine[0] == ';'){
 
+			if(strstr(inputLine, "VERSION:")){
+
+				if(strstr(inputLine, "VERSION:2.0") == NULL){
+					return INV_VER;
+				}
+			}
+		}
 	}
 
 
@@ -43,7 +52,7 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 
 // char* printCalendar(const Calendar* obj){}
 
-const char* printError(ErrorCode err){ // maybe memory does not work
+const char* printError(ErrorCode err){
 
 	char* retStr;
 

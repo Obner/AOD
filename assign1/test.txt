@@ -1,0 +1,99 @@
+; start of icalobject
+BEGIN:VCALENDAR
+; highest version number or the minimum and maximum range of the
+; iCalendar specification that is required in order to interpret the
+; iCalendar object (required)
+; We’ll stick with 2.0
+VERSION:2.0
+; identifier for the product that created the iCalendar object (required)
+PRODID:-//CIS2750//NONSGML Assignment1//EN
+; There must be at least one component in an iCalendar object
+; this one has a simple event (VEVENT) component
+; Start of event
+BEGIN:VEVENT
+; an event object is a collection of properties, some of which
+; are required, while others are optional
+; unique ID (required)
+UID:uid1@example.com
+; date/time that the instance of the iCalendar object was
+; created (required)
+DTSTAMP:19970714T170000Z
+; organizer for a calendar component (optional)
+; CN is the common or display name associated with the “Organizer"
+; mailto URL scheme is used to designate the Internet mailing
+; address of an individual or service - in this case the organizer
+ORGANIZER;CN=John Doe:MAILTO:john.doe@example.com
+; start date/time of the calendar event (optional)
+DTSTART:19970714T170000Z
+; end date/time of the calendar event
+; either 'dtend' or 'duration' may appear in a ‘eventprop'
+; you MUST include one of them if you have included dtstart, as we
+; did above. However, 'dtend' and ‘duration’ MUST NOT occur in the
+; same 'event'
+DTEND:19970715T035959Z
+; This property defines a short summary or subject for the
+; calendar component. (optional)
+SUMMARY:Bastille Day Party
+; end of event
+END:VEVENT
+; end of icalobject
+END:VCALENDAR
+Property Name: UID
+Purpose: This property defines the persistent, globally unique identifier for the calendar component.
+Value Type: TEXT
+Property Parameters: Non-standard property parameters can be specified on this property.
+Conformance: The property MUST be specified in the "VEVENT", “VTODO", "VJOURNAL" or "VFREEBUSY"
+calendar components.
+Property Name: DTSTAMP
+Purpose: The property indicates the date/time that the instance of the iCalendar object was created.
+Value Type: DATE-TIME
+Property Parameters: Non-standard property parameters can be specified on this property.
+Conformance: This property MUST be included in the "VEVENT", “VTODO", "VJOURNAL" or "VFREEBUSY"
+calendar components.
+Description: The value MUST be specified in the UTC time format.
+icalobject = 1*("BEGIN" ":" "VCALENDAR" CRLF
+icalbody
+"END" ":" "VCALENDAR" CRLF)
+icalbody = calprops component
+calprops = 2*(
+; 'prodid' and 'version' are both REQUIRED,
+; but MUST NOT occur more than once
+prodid /version /
+; 'calscale' and 'method' are optional,
+; but MUST NOT occur more than once
+calscale /
+method /
+x-prop
+)
+component = 1*(eventc / todoc / journalc / freebusyc /
+/ timezonec / iana-comp / x-comp)
+iana-comp = "BEGIN" ":" iana-token CRLF
+1*contentline
+"END" ":" iana-token CRLF
+x-comp = "BEGIN" ":" x-name CRLF
+1*contentline
+"END" ":" x-name CRLF
+Component Name: "VEVENT"
+eventc = "BEGIN" ":" "VEVENT" CRLF
+eventprop *alarmc
+"END" ":" "VEVENT" CRLF
+eventprop = *(
+; the following are optional,
+; but MUST NOT occur more than once
+class / created / description / dtstart / geo /
+last-mod / location / organizer / priority /
+dtstamp / seq / status / summary / transp /
+uid / url / recurid /
+; either 'dtend' or 'duration' may appear in
+; a 'eventprop', but 'dtend' and 'duration'
+; MUST NOT occur in the same 'eventprop'
+dtend / duration /
+; the following are optional,
+; and MAY occur more than once
+attach / attendee / categories / comment /
+contact / exdate / exrule / rstatus / related /
+resources / rdate / rrule / x-prop
+)
+A struct with:
+- required fields as members
+- optional parameters in a data structure
