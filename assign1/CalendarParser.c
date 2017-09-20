@@ -21,26 +21,29 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 	int prodFlag = 0;
 	int evtFlag  = 0;
 	ErrorCode check;
+	Calendar* cal;
+	cal = malloc(sizeof(Calendar));
 
 	//Checks to see if the file is invalid
 	check = parseFile(fileName);
 	if(check != OK){
+		deleteCalendar(cal);
 		return check;
 	}
 
 	inputFile = fopen(fileName, "r");
-	inputLine = malloc(sizeof(char)*100);
+	inputLine = malloc(sizeof(char)*76);
 
-	while(fgets(inputLine, 100, inputFile) != NULL){
+	while(fgets(inputLine, 76, inputFile) != NULL){
 
 		//printf("%s\n", inputLine);
 
 		if(inputLine[0] != ';'){
 			int len = strlen(inputLine);
 
-			//Erase the new
+			//Erase the newline
 			if (inputLine[len - 1] == '\n'){
-				inputLine[len - 1] = '\0';
+				inputLine[len - 2] = '\0';
 			}
 
 			//Update length
@@ -51,6 +54,7 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 
 			if(startWith(inputLine, "BEGIN:VCALENDAR")){
 				if(strtFlag == 1){ //Repeated BEGIN:VCALENDAR
+					deleteCalendar(cal);
 					freeFile(inputFile, inputLine);
 					return INV_CAL; 
 				} else {
@@ -61,6 +65,7 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 			if(startWith(inputLine, "VERSION:")){
 				if(strtFlag != 1){ //BEGIN:VCALENDAR has not yet been declared
 					freeFile(inputFile, inputLine);
+					deleteCalendar(cal);
 					return INV_CAL;
 				}
 
@@ -68,10 +73,11 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 
 				if(check != OK){
 					freeFile(inputFile, inputLine);
+					deleteCalendar(cal);
 					return check;
 				} else {
 					verFlag = 1;
-					(*obj)->version = 2.0;
+					cal->version = 2.0;
 				}
 				
 			}
@@ -152,6 +158,7 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 		inputLine[0] = '\0';
 	}
 
+	deleteCalendar(cal);
 	freeFile(inputFile, inputLine);
 	return OK;
 }
@@ -173,9 +180,6 @@ bool startWith(char* str, char* compare){
 }
 
 bool endsWith(char* str, char* compare){
-	printf("%s\n", compare);
-	printf("%s\n", strchr(str, ':'));
-	printf("%d\n", strcmp(compare, strchr(str, ':')));
 	if(strcmp(compare, strchr(str, ':')) == 0){
 		return true;
 	} else {
@@ -210,7 +214,6 @@ ErrorCode parseFile(char* fileName){
 ErrorCode parseVersion(char* inputLine, int verFlag){
 
 	if((endsWith(inputLine, ":2.0")) == false){
-		printf("HERE\n");
 		return INV_VER;
 	} else if (verFlag == 1){
 		return DUP_VER;
@@ -219,11 +222,15 @@ ErrorCode parseVersion(char* inputLine, int verFlag){
 	}
 }
 
-// void deleteCalendar(Calendar* obj){
-// 	free(obj);
-// }
+void deleteCalendar(Calendar* obj){
+	free(obj);
+}
 
-// char* printCalendar(const Calendar* obj){}
+char* printCalendar(const Calendar* obj){
+	printf("%f\n", cal->version);
+	printf("%s\n", cal->prodID);
+	printf("%s\n", cal->event->UID);
+}
 
 const char* printError(ErrorCode err){
 
@@ -266,15 +273,12 @@ int main(){
 	str = malloc(sizeof(char)*200);
 	Calendar** cal;
 
-	cal = malloc(sizeof(Calendar));
+	cal = malloc(sizeof(Calendar*));
 
 	strcpy(str, printError(createCalendar("test.ics", cal)));
 	printf("%s", str);
-	// printf("%f\n", (*cal)->version);
-	// printf("%s\n", (*cal)->prodID);
-	// printf("%s\n", (*cal)->event->UID);
 
-	free((*cal)->event);
+	//free((*cal)->event);
 	free((cal));
 	free(str);
 	return 0;
