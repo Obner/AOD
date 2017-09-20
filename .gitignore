@@ -1,6 +1,8 @@
 A0/*.exe
 A0/*.h.gch
 A0/*.exe.stackdump
+A0/*.out
 assign1/*.exe
 assign1/*.h.gch
 assign1/*.exe.stackdump
+assign1/*.out
