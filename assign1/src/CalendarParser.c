@@ -293,40 +293,40 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 	FILE* inputFile;
 	Alarm* tempAlarm = NULL;
 	char* inputLine;
-	int* strtFlag    = 0;
-	int* verFlag     = 0;
-	int* prodFlag    = 0;
-	int* evtFlag     = 0;
-	int* UIDFlag     = 0;
-	int* clasFlag    = 0;
-	int* createdFlag = 0;
-	int* decrFlag    = 0;
-	int* dtStrFlag   = 0;
-	int* geoFlag     = 0;
-	int* lstModFlag  = 0;
-	int* locFlag     = 0;
-	int* orgFlag     = 0;
-	int* prioFlag    = 0;
-	int* dtStmpFlag  = 0;
-	int* seqFlag     = 0;
-	int* statFlag    = 0;
-	int* sumFlag     = 0;
-	int* transFlag   = 0;
-	int* URLFlag     = 0;
-	int* recIDFlag   = 0;
-	int* dtendFlag   = 0;
-	int* durFlag     = 0;
-	int* calSclFlag  = 0;
-	int* methFlag    = 0;
-	int* repFlag     = 0;
-	int* attFlag     = 0;
-	int* almFlag     = 0;
-	int* almActFlag  = 0;
-	int* almTrigFlag = 0;
-	int* decrAlmFlag = 0;
-	int* sumAlmFlag  = 0;
-	int* durAlmFlag  = 0;
-	int* evtNum      = 0;
+	int* strtFlag   ;
+	int* verFlag    ;
+	int* prodFlag   ;
+	int* evtFlag    ;
+	int* UIDFlag    ;
+	int* clasFlag   ;
+	int* createdFlag;
+	int* decrFlag   ;
+	int* dtStrFlag  ;
+	int* geoFlag    ;
+	int* lstModFlag ;
+	int* locFlag    ;
+	int* orgFlag    ;
+	int* prioFlag   ;
+	int* dtStmpFlag ;
+	int* seqFlag    ;
+	int* statFlag   ;
+	int* sumFlag    ;
+	int* transFlag  ;
+	int* URLFlag    ;
+	int* recIDFlag  ;
+	int* dtendFlag  ;
+	int* durFlag    ;
+	int* calSclFlag ;
+	int* methFlag   ;
+	int* repFlag    ;
+	int* attFlag    ;
+	int* almFlag    ;
+	int* almActFlag ;
+	int* almTrigFlag;
+	int* decrAlmFlag;
+	int* sumAlmFlag ;
+	int* durAlmFlag ;
+	int* evtNum     ;
 
 	//Calendar mallocs
 	cal = malloc(sizeof(Calendar));
@@ -334,7 +334,8 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 
 	//Checks if malloc fails
 	if(cal == NULL || cal->event == NULL){
-		deleteCalendar(cal);
+		free(cal->event);
+		free(cal);
 		return OTHER_ERROR;
 	}
 	
@@ -373,6 +374,41 @@ ErrorCode createCalendar(char* fileName, Calendar** obj){
 	decrAlmFlag = malloc(sizeof(int));
 	durAlmFlag  = malloc(sizeof(int));
 	evtNum      = malloc(sizeof(int));
+
+	*strtFlag    = 0;
+	*verFlag     = 0;
+	*prodFlag    = 0;
+	*evtFlag     = 0;
+	*UIDFlag     = 0;
+	*clasFlag    = 0;
+	*createdFlag = 0;
+	*decrFlag    = 0;
+	*dtStrFlag   = 0;
+	*geoFlag     = 0;
+	*lstModFlag  = 0;
+	*locFlag     = 0;
+	*orgFlag     = 0;
+	*prioFlag    = 0;
+	*dtStmpFlag  = 0;
+	*seqFlag     = 0;
+	*statFlag    = 0;
+	*sumFlag     = 0;
+	*transFlag   = 0;
+	*URLFlag     = 0;
+	*recIDFlag   = 0;
+	*dtendFlag   = 0;
+	*durFlag     = 0;
+	*calSclFlag  = 0;
+	*methFlag    = 0;
+	*repFlag     = 0;
+	*attFlag     = 0;
+	*almFlag     = 0;
+	*almActFlag  = 0;
+	*almTrigFlag = 0;
+	*decrAlmFlag = 0;
+	*sumAlmFlag  = 0;
+	*durAlmFlag  = 0;
+	*evtNum      = 0;
 
 	//Checks to see if the flags were parsed correctly
 	check = checkFlags(evtNum, strtFlag, verFlag, prodFlag, evtFlag, UIDFlag, clasFlag, createdFlag, decrFlag, dtStrFlag, geoFlag, lstModFlag, locFlag, orgFlag, prioFlag, dtStmpFlag, seqFlag, statFlag, sumFlag, transFlag, URLFlag, recIDFlag, dtendFlag, durFlag, calSclFlag, methFlag, repFlag, attFlag, almFlag, almActFlag, almTrigFlag, sumAlmFlag, decrAlmFlag, durAlmFlag);
@@ -1562,11 +1598,6 @@ ErrorCode parseAtd(int* evtFlag, int* almFlag, Calendar* cal, char* inputLine, A
 
 ErrorCode parseBegin(int* strtFlag, int* evtFlag, int* almFlag, char* inputLine){
 	char* afterBegin;
-
-	if(strtFlag == NULL || evtFlag == NULL || almFlag == NULL || inputLine == NULL){
-		return INV_CAL;
-		//Here?
-	}
 
 	if(inputLine[5] != ':'){
 		return INV_CAL;
