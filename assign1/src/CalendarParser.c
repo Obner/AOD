@@ -1565,6 +1565,7 @@ ErrorCode parseBegin(int* strtFlag, int* evtFlag, int* almFlag, char* inputLine)
 
 	if(strtFlag == NULL || evtFlag == NULL || almFlag == NULL || inputLine == NULL){
 		return INV_CAL;
+		//Here?
 	}
 
 	if(inputLine[5] != ':'){
