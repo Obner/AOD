@@ -995,6 +995,11 @@ void* parseProp(char* inputLine){
  * 
  */
 ErrorCode parseClass(int* evtFlag, int* clasFlag, Calendar* cal, char* inputLine){
+
+	if(evtFlag == NULL || clasFlag == NULL || cal == NULL || inputLine == NULL){
+		return OTHER_ERROR;
+	}
+
 	if(*evtFlag != 1 || *clasFlag != 0){
 		return INV_EVENT;
 	}
@@ -1557,6 +1562,10 @@ ErrorCode parseAtd(int* evtFlag, int* almFlag, Calendar* cal, char* inputLine, A
 
 ErrorCode parseBegin(int* strtFlag, int* evtFlag, int* almFlag, char* inputLine){
 	char* afterBegin;
+
+	if(strtFlag == NULL || evtFlag == NULL || almFlag == NULL || inputLine == NULL){
+		return INV_CAL;
+	}
 
 	if(inputLine[5] != ':'){
 		return INV_CAL;
