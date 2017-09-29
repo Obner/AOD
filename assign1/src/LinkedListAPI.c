@@ -8,16 +8,12 @@
  * This file does not contain any reused code. In data structures
    I implemented a singly linked list. I referred to lecture notes
    in both CIS2520 and CIS2750
- * My current CIS2750 professor, Denis Nikitenko
+ * My current CIS2750 professor is, Denis Nikitenko
  */
 
 #include "LinkedListAPI.h"
 
 List initializeList(char* (*printFunction)(void *toBePrinted),void (*deleteFunction)(void *toBeDeleted),int (*compareFunction)(const void *first,const void *second)){
-	
-	if(printFunction == NULL || deleteFunction == NULL || compareFunction == NULL){
-		printf("A function pointer is NULL\n");
-	}
 
 	List list;
 
@@ -34,16 +30,16 @@ List initializeList(char* (*printFunction)(void *toBePrinted),void (*deleteFunct
 
 Node *initializeNode(void *data){
 
+	//Check for NULL list
 	if(data == NULL){
-		printf("initalizedNode: data is NULL\n");
 		return NULL;
 	}
 
 	Node* newNode;
 	newNode = malloc(sizeof(Node));
 
+	//If malloc fails
 	if(newNode == NULL){
-		printf("initializeNode: malloc failed\n");
 		return NULL;
 	}
 
@@ -56,12 +52,16 @@ Node *initializeNode(void *data){
 
 void insertFront(List *list, void *toBeAdded){
 
-	Node *insertNode;
+	//Checks for NULL list
+	if(list == NULL){
+		return;
+	}
 
+	Node *insertNode;
 	insertNode = initializeNode(toBeAdded);
 
+	//If initilizeNode sends a fail node
 	if(insertNode == NULL){
-		printf("Failed to insertFront\n");
 		return;
 	}
 
@@ -78,12 +78,16 @@ void insertFront(List *list, void *toBeAdded){
 
 void insertBack(List *list, void *toBeAdded){
 
-	Node *insertNode;
+	//If list is NULL
+	if(list == NULL){
+		return;
+	}
 
+	Node *insertNode;
 	insertNode = initializeNode(toBeAdded);
 
+	//If initilizeNode sends a failed node
 	if(insertNode == NULL){
-		printf("Failed to insertBack\n");
 		return;
 	}
 
@@ -100,23 +104,33 @@ void insertBack(List *list, void *toBeAdded){
 
 void clearList(List *list){
 
+	//If the list or delete function is NULL 
+	if(list == NULL || list->deleteData == NULL){
+		return;
+	}
+
 	Node* curr;
 
 	while(list->head != NULL){
 		curr = list->head;
+		list->head = curr->next;
 
-		//Reached end of the list
 		if(curr->next != NULL){
-			curr->next->previous = NULL;
+			curr->next->previous = NULL;	
 		}
 		
 		list->deleteData(curr->data);
-		list->head = curr->next;
 		free(curr);
 	}
+	list->tail = NULL;
 }
 
 void insertSorted(List *list, void *toBeAdded){
+
+	//If the list or compare funtion is NULL
+	if(list == NULL || list->compare == NULL){
+		return;
+	}
 
 	Node* insertNode;
 	Node* curr;
@@ -124,8 +138,8 @@ void insertSorted(List *list, void *toBeAdded){
 	curr = list->head;
 	insertNode = initializeNode(toBeAdded);
 
+	//If initializeNode returns a NULL node
 	if(insertNode == NULL){
-		printf("Failed to insertSorted\n");
 		return;
 	}
 
@@ -175,8 +189,11 @@ void insertSorted(List *list, void *toBeAdded){
 
 void* deleteDataFromList(List *list, void *toBeDeleted){
 
-	Node* curr;
+	if(list == NULL || toBeDeleted == NULL || list->compare == NULL || list->deleteData == NULL){
+		return NULL;
+	}
 
+	Node* curr;
 	curr = list->head;
 
 	//Search the list for the same data
@@ -211,18 +228,25 @@ void* deleteDataFromList(List *list, void *toBeDeleted){
 
 void* getFromFront(List list){
 
+	if(list.head == NULL){
+		return NULL;
+	}
+
 	return list.head->data;
 }
 
 void* getFromBack(List list){
+
+	if(list.tail == NULL){
+		return NULL;
+	}
 
 	return list.tail->data;
 }
 
 char* toString(List list){
 
-	if(list.head == NULL){
-		printf("List does not have element\n");
+	if(list.head == NULL || list.printData == NULL){
 		return NULL;
 	}
 
@@ -237,6 +261,13 @@ char* toString(List list){
 	data = list.printData(curr->data);
 	len  = strlen(data);
 	str  = malloc(sizeof(char)*len + 2);
+
+	//If malloc fails
+	if(str == NULL){
+		return NULL;
+	}
+
+	//The first string
 	strcpy(str, data);
 	strcat(str, "\n");
 	free(data);
@@ -251,8 +282,8 @@ char* toString(List list){
 		len  = strlen(data) + len + 2;
 		testStr = (char*)realloc(str, sizeof(char)*len +2);
 
+		//If realloc fails
 		if(testStr == NULL){
-			printf("Memory allocation in toString failed\n");
 			return NULL;
 
 		} else {
@@ -271,7 +302,6 @@ char* toString(List list){
 ListIterator createIterator(List list){
 
 	ListIterator it;
-
 	it.current = list.head;
 
 	return it;
@@ -282,7 +312,7 @@ void* nextElement(ListIterator* iter){
 	void* currData;
 
 	//Reached the end of the list
-	if(iter->current == NULL){
+	if(iter == NULL || iter->current == NULL){
 		return NULL;
 	}
 

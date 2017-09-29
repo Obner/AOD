@@ -15,9 +15,8 @@
 
 List initializeList(char* (*printFunction)(void *toBePrinted),void (*deleteFunction)(void *toBeDeleted),int (*compareFunction)(const void *first,const void *second)){
 	
-	if(printFunction == NULL || deleteFunction == NULL || compareFunction == NULL){
-		printf("A function pointer is NULL\n");
-	}
+	//if(printFunction == NULL || deleteFunction == NULL || compareFunction == NULL){
+	//}
 
 	List list;
 
@@ -35,7 +34,6 @@ List initializeList(char* (*printFunction)(void *toBePrinted),void (*deleteFunct
 Node *initializeNode(void *data){
 
 	if(data == NULL){
-		printf("initalizedNode: data is NULL\n");
 		return NULL;
 	}
 
@@ -43,7 +41,6 @@ Node *initializeNode(void *data){
 	newNode = malloc(sizeof(Node));
 
 	if(newNode == NULL){
-		printf("initializeNode: malloc failed\n");
 		return NULL;
 	}
 
@@ -56,12 +53,14 @@ Node *initializeNode(void *data){
 
 void insertFront(List *list, void *toBeAdded){
 
-	Node *insertNode;
+	if(list == NULL){
+		return;
+	}
 
+	Node *insertNode;
 	insertNode = initializeNode(toBeAdded);
 
 	if(insertNode == NULL){
-		printf("Failed to insertFront\n");
 		return;
 	}
 
@@ -78,12 +77,14 @@ void insertFront(List *list, void *toBeAdded){
 
 void insertBack(List *list, void *toBeAdded){
 
-	Node *insertNode;
+	if(list == NULL){
+		return;
+	}
 
+	Node *insertNode;
 	insertNode = initializeNode(toBeAdded);
 
 	if(insertNode == NULL){
-		printf("Failed to insertBack\n");
 		return;
 	}
 
@@ -100,23 +101,35 @@ void insertBack(List *list, void *toBeAdded){
 
 void clearList(List *list){
 
+	if(list == NULL){
+		return;
+	} else if (list->deleteData == NULL){
+		return;
+	}
+
 	Node* curr;
 
 	while(list->head != NULL){
 		curr = list->head;
+		list->head = curr->next;
 
-		//Reached end of the list
 		if(curr->next != NULL){
-			curr->next->previous = NULL;
+			curr->next->previous = NULL;	
 		}
 		
 		list->deleteData(curr->data);
-		list->head = curr->next;
 		free(curr);
 	}
+	list->tail = NULL;
 }
 
 void insertSorted(List *list, void *toBeAdded){
+
+	if(list == NULL){
+		return;
+	} else if(list->compare == NULL){
+		return;
+	}
 
 	Node* insertNode;
 	Node* curr;
@@ -125,7 +138,6 @@ void insertSorted(List *list, void *toBeAdded){
 	insertNode = initializeNode(toBeAdded);
 
 	if(insertNode == NULL){
-		printf("Failed to insertSorted\n");
 		return;
 	}
 
@@ -175,8 +187,15 @@ void insertSorted(List *list, void *toBeAdded){
 
 void* deleteDataFromList(List *list, void *toBeDeleted){
 
-	Node* curr;
+	if(toBeDeleted == NULL){
+		return NULL;
+	} else if(list->compare == NULL){
+		return NULL;
+	} else if(list->deleteData == NULL){
+		return NULL;
+	}
 
+	Node* curr;
 	curr = list->head;
 
 	//Search the list for the same data
@@ -211,10 +230,18 @@ void* deleteDataFromList(List *list, void *toBeDeleted){
 
 void* getFromFront(List list){
 
+	if(list.head == NULL){
+		return NULL;
+	}
+
 	return list.head->data;
 }
 
 void* getFromBack(List list){
+
+	if(list.tail == NULL){
+		return NULL;
+	}
 
 	return list.tail->data;
 }
@@ -222,7 +249,8 @@ void* getFromBack(List list){
 char* toString(List list){
 
 	if(list.head == NULL){
-		printf("List does not have element\n");
+		return NULL;
+	} else if (list.printData == NULL){
 		return NULL;
 	}
 
@@ -237,6 +265,12 @@ char* toString(List list){
 	data = list.printData(curr->data);
 	len  = strlen(data);
 	str  = malloc(sizeof(char)*len + 2);
+
+	if(str == NULL){
+		return NULL;
+	}
+
+	//The first string
 	strcpy(str, data);
 	strcat(str, "\n");
 	free(data);
@@ -252,7 +286,6 @@ char* toString(List list){
 		testStr = (char*)realloc(str, sizeof(char)*len +2);
 
 		if(testStr == NULL){
-			printf("Memory allocation in toString failed\n");
 			return NULL;
 
 		} else {
@@ -271,7 +304,6 @@ char* toString(List list){
 ListIterator createIterator(List list){
 
 	ListIterator it;
-
 	it.current = list.head;
 
 	return it;

@@ -97,3 +97,12 @@ resources / rdate / rrule / x-prop
 A struct with:
 - required fields as members
 - optional parameters in a data structure
+
+
+MCS3040 ez midterm ez bank
+FRHD1010 
+EDRD 4120
+
+wirelesss sensors
+optimization
+nerofuzzy

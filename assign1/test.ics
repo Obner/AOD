@@ -1,40 +1,60 @@
-; start of icalobject
 BEGIN:VCALENDAR
-; highest version number or the minimum and maximum range of the
-; iCalendar specification that is required in order to interpret the
-; iCalendar object (required)
-; We’ll stick with 2.0
 VERSION:2.0
-; identifier for the product that created the iCalendar object (required)
-PRODID:-//CIS2750//NONSGML Assignment1//EN
-; There must be at least one component in an iCalendar object
-; this one has a simple event (VEVENT) component
-; Start of event
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+PRODID:-//CIS2750//NONSGML Assignment1//
+;Begining of event
 BEGIN:VEVENT
-; an event object is a collection of properties, some of which
-; are required, while others are optional
-; unique ID (required)
+CLASS:PUBLIC
+LAST-MODIFIED:19960817T133000Z
+RESOURCES;LANGUAGE=fr:Nettoyeur haute pression
+RDATE;TZID=America/New_York:19970714T083000
+CATEGORIES:APPOINTMENT,EDUCATION
+COMMENT:The meeting really needs to include both ourselves
+CONTACT;ALTREP="CID:part3.msg970930T083000SILVER@example.com":
+EXDATE:19960402T010000Z,19960403T010000Z,19960404T010000Z
+REQUEST-STATUS:3.1;Invalid property value;DTSTART:96-Apr-01
+ATTACH:CID:jsmith.part3.960817T083000.xyzMail@example.com
+ATTENDEE:mailto:john_public@example.com
+LOCATION;ALTREP="http://xyzcorp.com/conf-rooms/f123.vcf"
+RECURRENCE-ID;RANGE=THISANDFUTURE:19960120T120000Z
+URL:http://www.example.com/calendar/busytime/jsmith.ifb
+PRIORITY:1
+SEQUENCE:0
+STATUS:TENTATIVE
 UID:uid1@example.com
-; date/time that the instance of the iCalendar object was
-; created (required)
 DTSTAMP:19970714T170000Z
-; organizer for a calendar component (optional)
-; CN is the common or display name associated with the “Organizer"
-; mailto URL scheme is used to designate the Internet mailing
-; address of an individual or service - in this case the organizer
 ORGANIZER;CN=John Doe:MAILTO:john.doe@example.com
-; start date/time of the calendar event (optional)
 DTSTART:19970714T170000Z
-; end date/time of the calendar event
-; either 'dtend' or 'duration' may appear in a ‘eventprop'
-; you MUST include one of them if you have included dtstart, as we
-; did above. However, 'dtend' and ‘duration’ MUST NOT occur in the
-; same 'event'
+;Beggining of the alarm
+BEGIN:VALARM
+TRIGGER;VALUE=DATE-TIME:19970317T133000Z
+REPEAT:4
+DURATION:PT15M
+ACTION:AUDIO
+ATTACH;FMTTYPE=audio/basic:ftp://example.com/pub/sounds
+;End of alarm
+END:VALARM
 DTEND:19970715T035959Z
-; This property defines a short summary or subject for the
-; calendar component. (optional)
+ATTACH:CID:jsmith.part5.960817T083000.xyzMail@example.com
+ATTENDEE:mailto:obner_public@example.com
 SUMMARY:Bastille Day Party
-; end of event
+BEGIN:VALARM
+TRIGGER:-PT30M
+REPEAT:2
+DURATION:PT15M
+ACTION:DISPLAY
+DESCRIPTION:Breakfast meeting with executive
+END:VALARM
+BEGIN:VALARM
+TRIGGER;RELATED=END:-P2D
+ACTION:EMAIL
+ATTENDEE:mailto:john_doe@example.com
+SUMMARY:*** REMINDER: SEND AGENDA FOR WEEKLY STAFF MEETING ***
+DESCRIPTION:A draft agenda needs to be sent out to the attendees
+ATTACH;FMTTYPE=application/msword:http://example.com/
+END:VALARM
+;End event
 END:VEVENT
-; end of icalobject
+;End of calendar
 END:VCALENDAR

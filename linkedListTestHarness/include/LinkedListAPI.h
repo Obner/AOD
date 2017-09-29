@@ -166,8 +166,9 @@ ListIterator createIterator(List list);
 
 
 /** Function that returns the next element of the list through the iterator. 
-* This function returns the head of the list the first time it is called after.
-* the iterator was created. Every subsequent call returns the next element.
+* This function returns the data at head of the list the first time it is called after.
+* the iterator was created. Every subsequent call returns the data associated with the next element.
+* Returns NULL once the end of the iterator is reached.
 *@pre List exists and is valid.  Iterator exists and is valid.
 *@post List remains unchanged.  The iterator points to the next element on the list.
 *@return The data associated with the list element that the iterator pointed to when the function was called.

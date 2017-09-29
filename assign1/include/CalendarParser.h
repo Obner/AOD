@@ -1,3 +1,5 @@
+//Obner Usi 0912370
+
 #ifndef CALENDARPARSER_H
 #define CALENDARPARSER_H
 
@@ -9,10 +11,7 @@
 #include "LinkedListAPI.h"
 
 //Error codes that indicate what went wrong during parsing
-typedef enum ers {OK, INV_FILE, INV_CAL, INV_VER, DUP_VER, INV_PRODID, DUP_PRODID, INV_EVENT, INV_CREATEDT} ErrorCode;
-
-//Reference to a 
-extern const char* descr[9];
+typedef enum ers {OK, INV_FILE, INV_CAL, INV_VER, DUP_VER, INV_PRODID, DUP_PRODID, INV_EVENT, INV_CREATEDT, OTHER_ERROR} ErrorCode;
 
 //Represents iCalendar Date-time
 typedef struct dt {
@@ -42,7 +41,7 @@ typedef struct alarm {
     List    properties;
 } Alarm;
 
-//Reprecents an iCalendar event component
+//Represents an iCalendar event component
 typedef struct evt {
 	//Event user ID.  We will assume that the UserID, even if malformed, does not exceed 1000 bytes
 	char 		UID[1000];
@@ -55,7 +54,7 @@ typedef struct evt {
 	
 } Event;
 
-//Reprecents an iCalendar object
+//Represents an iCalendar object
 typedef struct ical {
 	//iCalendar version
 	float 	version;
@@ -78,7 +77,7 @@ typedef struct ical {
 		appropriate error code was returned
  *@return the error code indicating success or the error encountered when parsing the calendar
  *@param fileName - a string containing the name of the iCalendar file
- *@param a double pointer to a Calendar struct
+ *@param a double pointer to a Calendar struct that needs to be allocated
 **/
 ErrorCode createCalendar(char* fileName, Calendar** obj);
 
@@ -100,11 +99,12 @@ void deleteCalendar(Calendar* obj);
 **/
 char* printCalendar(const Calendar* obj); 
 
+
 /** Function to "convert" the ErrorCode into a humanly redabale string.
  *@return a string contaning a humanly readable representation of the error code by indexing into 
           the descr array using rhe error code enum value as an index
  *@param err - an error code
 **/
-const char* printError(ErrorCode err);   
+char* printError(ErrorCode err);   
 
 #endif	
